@@ -25,7 +25,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install Django
-        pip install MySQL-python
         pip install mysqlclient 
     - name: Run Tests
       run: |
