@@ -1,4 +1,5 @@
 #visual studio files
 
-**/.vscode
+settings.json
 desktop.ini
+.vscode/settings.json
