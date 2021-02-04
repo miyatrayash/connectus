@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'chatapp.apps.ChatappConfig',
+    'chatapp.apps.ChatappConfig'
 ]
 
 MIDDLEWARE = [
@@ -77,11 +77,11 @@ WSGI_APPLICATION = 'connectus.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'connect_us',
-        'USER': 'root',
-        'PASSWORD':'',
-        'HOST': 'localhost',
-        'PORT': '3306'
+        'NAME': 'connectus',
+        'USER': 'root', #user name for the database
+        'PASSWORD' : '', # password
+        'HOST' : '127.0.0.1', # IP address of the database
+        'PORT' : '3306', # port number of database server
     }
 }
 
