@@ -3,5 +3,6 @@
         "Miyatra",
         "Yash",
         "ruchit"
-    ]
+    ],
+    "python.formatting.provider": "yapf"
 }
