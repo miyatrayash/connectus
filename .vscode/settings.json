@@ -4,5 +4,5 @@
         "Yash",
         "ruchit"
     ],
-    "python.formatting.provider": "yapf"
+    "python.formatting.provider": "black"
 }

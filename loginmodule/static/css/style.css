@@ -1,0 +1,96 @@
+/** @format */
+
+h1 {
+	align-self: center;
+	color: aliceblue;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	font-family: sans-serif;
+	background: url(/static/img/bg.jpg) no-repeat;
+	background-size: 100% auto;
+	/* background-color: red; */
+}
+.login-box {
+	width: 280px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	padding: 13px 0;
+	transform: translate(-50%, -50%);
+	color: white;
+	align-items: center;
+	margin: 13 px auto;
+}
+.login-box h2 {
+	align-self: center;
+	border-bottom: 2px solid #4caf50;
+	margin-bottom: 50px;
+	font-weight: 200;
+}
+.textbox {
+	align-items: center;
+	padding: 13px 0;
+	text-align: center;
+}
+
+.textbox i {
+	width: 26px;
+	float: left;
+	text-align: center;
+}
+
+.textbox input {
+	border: 0;
+	background: none;
+	display: block;
+	text-align: center;
+	border: 2px solid #3498db;
+	padding: 10px 15px 10px 15px;
+	outline: none;
+	color: white;
+	margin: 0px 50px 0px 50px;
+	border-radius: 24px;
+	transition: 0.25s;
+	align-self: center;
+	align-items: center;
+	box-align: center;
+}
+.textbox input:focus {
+	margin: 0px 0px 0px 0px;
+	padding-right: 70px;
+	padding-left: 70px;
+	border-color: #2ecc71;
+}
+.textbox input[type="submit"] {
+	border: 0;
+	background: none;
+	display: block;
+	margin: 20px auto;
+	text-align: center;
+	padding: 14px 40px;
+	border-radius: 24px;
+	border: 2px solid #2edb59a4;
+	color: white;
+	cursor: pointer;
+	outline: none;
+}
+.box input[type="submit"] {
+	border: 0;
+	background: none;
+	display: block;
+	margin: 20px auto;
+	text-align: center;
+	border: 2px solid #2ecc71;
+	padding: 14px 40px;
+	outline: none;
+	color: white;
+	border-radius: 24px;
+	transition: 0.25s;
+	cursor: pointer;
+}
+.box input[type="submit"]:hover {
+	background: #2ecc71;
+}

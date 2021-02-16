@@ -53,7 +53,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'connectus.urls'
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "loginmodule/static"),]
 
 TEMPLATES = [
     {
@@ -129,3 +128,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT= os.path.join(BASE_DIR, 'static')
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'loginmodule/static')
+]
