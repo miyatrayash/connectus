@@ -6,5 +6,5 @@ urlpatterns = [
     url(r'^addstudentinfo/$', views.addstudentinfo),
     url(r'^getstudentinfo/$', views.getstudentinfo),
     url(r'^addsuccess/$', views.addsuccess),
-    url('students/', views.StudentListView.as_view(), name ='students'),
+    path('students/', views.StudentListView.as_view(), name ='students'),
 ]

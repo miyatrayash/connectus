@@ -16,10 +16,10 @@ def addstudentinfo(request):
     sdate = request.POST.get('birthdate', '')
     s = Student(student_name = sname, student_dob=sdate)
     s.save()
-    return HttpResponseRedirect('/firstdbtest/addsuccess/')
+    return HttpResponseRedirect('/firstdbtest/addsuccess')
 
 def addsuccess(request):
     return render(request,'addrecord.html')
-
 class StudentListView(generic.ListView):
     model = Student
+    template_name = 'student_list.html'
