@@ -20,4 +20,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('chatapp', include('chatapp.urls')),
     path('loginmodule/', include('loginmodule.urls')),
+    path('firstdbtest/',include('firstdbtest.urls')),
 ]
