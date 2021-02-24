@@ -3,3 +3,4 @@
 settings.json
 desktop.ini
 .vscode/settings.json
+*.pyc
