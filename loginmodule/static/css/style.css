@@ -9,9 +9,9 @@ body {
 	margin: 0;
 	padding: 0;
 	font-family: sans-serif;
-	background: url(/static/img/bg.jpg) no-repeat;
+	/* background: url(/static/img/bg.jpg) no-repeat;
 	background-size: 100% auto;
-	/* background-color: red; */
+	background-color: red; */
 }
 .login-box {
 	width: 280px;
@@ -77,7 +77,7 @@ body {
 	cursor: pointer;
 	outline: none;
 }
-.box input[type="submit"] {
+.textbox input[type="submit"] {
 	border: 0;
 	background: none;
 	display: block;
@@ -91,6 +91,6 @@ body {
 	transition: 0.25s;
 	cursor: pointer;
 }
-.box input[type="submit"]:hover {
+.textbox input[type="submit"]:hover {
 	background: #2ecc71;
 }

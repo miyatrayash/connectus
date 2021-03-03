@@ -40,4 +40,6 @@ def logout(request):
     auth.logout(request)
     return render(request,'logout.html')
 
+def home_screen(request):
+    return render(request,'home.html')
 
