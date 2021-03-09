@@ -37,8 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'chatapp.apps.ChatappConfig'
-    'firstdbtest.apps.FirstdbtestConfig'
+    'loginmodule'
 ]
 
 MIDDLEWARE = [
@@ -58,8 +57,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'firstdbtest/templates'),
-            os.path.join(BASE_DIR, 'loginmodule/templates')
+            os.path.join(BASE_DIR, 'loginmodule/templates'),
             ],
         
         'APP_DIRS': True,
@@ -137,3 +135,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'loginmodule/static')
 ]
+
+
+AUTH_USER_MODEL = 'loginmodule.User'

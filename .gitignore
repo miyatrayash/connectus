@@ -2,5 +2,7 @@
 
 settings.json
 desktop.ini
-.vscode/settings.json
+*/.vscode/*
 *.pyc
+
+*/migrations/*
