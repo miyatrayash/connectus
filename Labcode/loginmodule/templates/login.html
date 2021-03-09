@@ -1,0 +1,87 @@
+<!-- @format -->
+
+{% extends 'base.html' %} {% block content %}
+
+<style>
+	.form-container {
+		border: 1px solid cornflowerblue;
+		padding: 50px, 60 px;
+		-webkit-box-shadow: 2px 0px 27px -1px rgba(0, 0, 0, 0.75);
+		-moz-box-shadow: 2px 0px 27px -1px rgba(0, 0, 0, 0.75);
+		box-shadow: 2px 0px 27px -1px rgba(0, 0, 0, 0.75);
+		align-items: center;
+	}
+	h1 {
+		text-align: center;
+	}
+</style>
+
+<br /><br />
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-4 col-sm-4 col-xs-12"></div>
+		<div class="col-md-4 col-sm-4 col-xs-12">
+			<form class="form-container" action="../auth_view">
+                {% csrf_token %}
+				<h1 style="color: rgb(48, 44, 39)">Login</h1>
+				<div class="mb-3 form-control">
+					<div class="row g-3 align-items-center">
+						<div class="col-auto">
+							<label for="inputemail" class="col-form-label"
+								>Email Address</label
+							>
+						</div>
+						<div class="col-auto">
+							<input
+								name="email"
+								type="text"
+								id="inputemail"
+								class="form-control"
+								aria-describedby="EmailHelpInline"
+							/>
+						</div>
+						<div class="col-auto">
+							<span id="passwordHelpInline" class="form-text">
+								Your email address will be safe.
+							</span>
+						</div>
+					</div>
+				</div>
+				<div class="mb-3 form-control">
+					<div class="row g-3 align-items-center">
+						<div class="col-auto">
+							<label for="inputPassword6" class="col-form-label"
+								>Password</label
+							>
+						</div>
+						<div class="col-auto">
+							<input
+								type="password"
+								id="inputPassword6"
+								class="form-control"
+								aria-describedby="passwordHelpInline"
+							/>
+						</div>
+						<br />
+						<div class="col-auto">
+							<span id="passwordHelpInline" class="form-text">
+								Must be 8-20 characters long.
+							</span>
+						</div>
+					</div>
+				</div>
+				<div class="mb-3 form-check form-control">
+					<input type="checkbox" class="form-check-input" id="exampleCheck1" />
+					<label class="form-check-label" for="exampleCheck1"
+						>Remember me</label
+					>
+				</div>
+				<button type="submit" class="btn btn-success btn-block form-control">
+					Submit
+				</button>
+			</form>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
