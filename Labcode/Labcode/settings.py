@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+     'DBtestapp.apps.DbtestappConfig',
 ]
 
 MIDDLEWARE = [
@@ -74,10 +75,14 @@ WSGI_APPLICATION = 'Labcode.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'labcode',
+        'USER': 'root', #user name for the database
+        'PASSWORD' : '', # password
+        'HOST' : '127.0.0.1', # IP address of the database
+        'PORT' : '3306', # port number of database server
+    }
 }
 
 
