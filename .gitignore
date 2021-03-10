@@ -4,5 +4,6 @@ settings.json
 desktop.ini
 */.vscode/*
 *.pyc
+__pycache__/
 
-*/migrations/*
+**/migrations
