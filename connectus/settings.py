@@ -59,6 +59,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             os.path.join(BASE_DIR, 'loginmodule/templates'),
+            os.path.join(BASE_DIR, 'chat/templates'),
             ],
         
         'APP_DIRS': True,
@@ -91,7 +92,7 @@ DATABASES = {
 }
 
 AUTHENTICATION_BACKENDS = ( 
-    'django.contrib.auth.backends.ModelBackend',
+    'loginmodule.backends.EmailBackend',
 )
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -137,5 +138,6 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'loginmodule/static')
 ]
 
+ASGI_APPLICATION = "connectus.routing.application"
 
 AUTH_USER_MODEL = 'loginmodule.User'
