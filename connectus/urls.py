@@ -16,8 +16,9 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import include, path
-
+from chat import views
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url(r'', include('loginmodule.urls'),name="home"),
+    path('', include('loginmodule.urls')),
+    path('home',views.home,name='home')
 ]

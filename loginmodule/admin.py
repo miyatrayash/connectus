@@ -8,6 +8,7 @@ class UserAdminConfig(UserAdmin):
     ordering = ('-start_date',)
     list_display = ('email','username','name','is_active','is_staff')
 
+
     fieldsets = (
         (None,{'fields':('email','username','name')}),
         ('Permissions',{'fields':('is_staff','is_active')}),

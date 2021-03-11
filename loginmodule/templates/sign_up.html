@@ -20,9 +20,9 @@
 <div class="container-fluid">
 	<div class="row d-flex justify-content-center">
 		<div class="col-md-4 col-sm-4 col-xs-12">
-			<form class="form-container" action="../register" method="POST">
+			<form class="form-container" method="POST">
                 {% csrf_token %}
-				<h1 style="color: rgb(48, 44, 39)">Login</h1>
+				<h1 style="color: rgb(48, 44, 39)">Sign Up</h1>
 				<div class="mb-3 form-group">
 					<div class="row g-3 align-items-center">
 						<div class="col-auto"></div>
@@ -39,6 +39,7 @@
 								aria-describedby="EmailHelpInline"
 								placeholder="abc@gmail.com"
 								name="email"
+								required
 							/>
 						</div>
 					</div>
@@ -56,6 +57,7 @@
 								class="form-control"
 								placeholder="abc"
 								name="name"
+								required
 							/>
 						</div>
 					</div>
@@ -73,6 +75,7 @@
 								class="form-control"
 								placeholder="abc"
 								name="username"
+								required
 							/>
 						</div>
 					</div>
@@ -92,14 +95,9 @@
 								class="form-control"
 								aria-describedby="passwordHelpInline"
 								placeholder="password"
-								name="password"
+								name="password1"
+								required
 							/>
-						</div>
-						<br />
-						<div class="col-auto">
-							<span id="passwordHelpInline" class="form-text">
-								Must be 8-20 characters long.
-							</span>
 						</div>
 					</div>
 				</div>
@@ -118,25 +116,30 @@
 								class="form-control"
 								aria-describedby="passwordHelpInline"
 								placeholder="password"
-								name="confPassword"
+								name="password2"
+								required
 							/>
-						</div>
-						<div class="col-auto">
-							<span id="passwordHelpInline" class="form-text">
-								Same as before
-							</span>
 						</div>
 					</div>
 				</div>
-				<div class="mb-3 form-check form-group">
-					<input type="checkbox" class="form-check-input" id="exampleCheck1" />
-					<label class="form-check-label" for="exampleCheck1"
-						>Remember me</label
-					>
-				</div>
-				<button type="submit" class="btn btn-success btn-block form-control">
-					Submit
-				</button>
+				
+				{% for field in registration_form %}
+					<p>
+					{% for error in field.errors %}
+					<p style="color: red">{{ error }}</p>
+					{% endfor %}
+					</p>
+					{% endfor %}
+					{% if registration_form.non_field_errors %}
+					<div style="color: red">
+						<p>{{registration_form.non_field_errors}}</p>
+					</div>
+					{% endif %}
+					<button type="submit" class="btn btn-success form-control">
+						Submit
+					</button>
+					</div>
+				
 			</form>
 		</div>
 	</div>

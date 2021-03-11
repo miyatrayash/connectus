@@ -21,7 +21,7 @@
 	<div class="row">
 		<div class="col-md-4 col-sm-4 col-xs-12"></div>
 		<div class="col-md-4 col-sm-4 col-xs-12">
-			<form class="form-container" action="../auth_view" method="POST">
+			<form class="form-container"  method="POST">
                 {% csrf_token %}
 				<h1 style="color: rgb(48, 44, 39)">Login</h1>
 				<div class="mb-3 form-control">
@@ -77,6 +77,19 @@
 						>Remember me</label
 					>
 				</div>
+				{% for field in login_form %}
+				<p>
+				{% for error in field.errors %}
+				<p style="color: red">{{ error }}</p>
+				{% endfor %}
+				</p>
+				{% endfor %}
+				{% if login_form.non_field_errors %}
+				<div style="color: red">
+				<p>{{login_form.non_field_errors}}</p>
+				</div>
+				{% endif %}
+
 				<button type="submit" class="btn btn-success btn-block form-control">
 					Submit
 				</button>
