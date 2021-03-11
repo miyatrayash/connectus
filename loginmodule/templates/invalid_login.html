@@ -1,7 +1,12 @@
 {% include 'base.html' %}
 {% block content %}
-<div class="login-box">
-    <h2> Invalid user name or password! </h2>
-    <p> Click <a href="/login"> here </a> to login again. </p>
+<div class="alert alert-danger" role="alert" align="center">
+    <br>
+    A simple danger alert—check it out!
+    <br><br><p> Click 
+    <button type="button" class="btn btn-outline-success">
+        <a href="/login"> here </a> 
+        </button>
+        to login again. </p>
 </div>
 {% endblock %}

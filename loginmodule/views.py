@@ -39,6 +39,10 @@ def logged_in(request):
 def invalid_login(request):
     return render(request, "invalid_login.html")
 
+def contact_us(request):
+    c = {}
+    c.update(csrf(request))
+    return render(request,"connect_us.html")
 
 def logout(request):
     auth.logout(request)
