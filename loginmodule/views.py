@@ -1,5 +1,6 @@
-from django.http.response import HttpResponseBadRequest
-from django.shortcuts import render
+from loginmodule.forms import AccountAuthenticationForm, RegistrationForm
+from django.http.response import HttpResponse, HttpResponseBadRequest
+from django.shortcuts import redirect, render
 from django.http import HttpResponseRedirect
 from django.contrib import auth
 from django.template.context_processors import csrf
@@ -7,42 +8,34 @@ from .models import User
 
 
 def login(request):
-    c = {}
-    c.update(csrf(request))
-    return render(request, "login.html", c)
+    context = {}
+
+    user = request.user
+
+    if user.is_authenticated:
+        return redirect("home")
 
 
-def auth_view(request):
-    email = request.POST.get("email")
-    password = request.POST.get("password")
-    print(email)
+    if request.POST:
+        form = AccountAuthenticationForm(request.POST)
+        if form.is_valid():
+            email = request.POST['email']
+            password = request.POST['password']
+            user = auth.authenticate(email=email,password=password)
 
-    # username = 'test'
-    # password = 'test123'
-    user = auth.authenticate(username=email, password=password)
+            if user:
+                auth.login(request,user)
+                return render(request,"home.html")
 
-    # User.objects.create_user( username="whatever", email="whatever@some.com", password="password")
-    # user = auth.authenticate(username="whatever", password="password")
-    print(user)
-    if user is not None:
-        auth.login(request, user)
-        return HttpResponseRedirect("logged_in/")
-    else:
-        return HttpResponseRedirect("invalid_login/")
+        else:
+            context['login_form'] =form
+    return render(request, "login.html", context)
 
-
-def logged_in(request):
-    print(request.user.username)
-    return render(request, "home.html", {"fullname": request.user.username})
-
-
-def invalid_login(request):
-    return render(request, "invalid_login.html")
 
 def contact_us(request):
     c = {}
     c.update(csrf(request))
-    return render(request,"connect_us.html")
+    return render(request,"contact_us.html")
 
 def logout(request):
     auth.logout(request)
@@ -54,22 +47,27 @@ def home_screen(request):
 
 
 def sign_up(request):
-    c = {}
-    c.update(csrf(request))
-    return render(request, "sign_up.html", c)
+    user = request.user
 
+    if user.is_authenticated:
+        return HttpResponse(f"You are already authenticated as {user.email}.")
 
-def register(request):
+    context = {}
 
-    email = request.POST.get("email")
-    password = request.POST.get("password")
-    name = request.POST.get("name")
-    conf_password = request.POST.get("confPassword")
+    if request.POST:
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            email = form.cleaned_data.get('email').lower()
+            raw_password = form.cleaned_data.get('password1')
+            account = auth.authenticate(email=email,password=raw_password)
 
-    username = request.POST.get("username")
-    if password != conf_password:
-        return HttpResponseBadRequest("Enter same password")
-    user = User.objects.create_user(email, username, name, password)
-    user.save()
+            auth.login(request, account)
+            return render(request,"home.html")
+    
 
-    return HttpResponseRedirect("login/")
+        else:
+            context['registration_form'] = form
+
+    return render(request,'sign_up.html', context)
+
