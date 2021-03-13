@@ -82,12 +82,12 @@ WSGI_APPLICATION = 'connectus.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'connectus',
-        'USER': 'root', #user name for the database
-        'PASSWORD' : '', # password
+        'USER': 'postgres', #user name for the database
+        'PASSWORD' : 'yash', # password
         'HOST' : '127.0.0.1', # IP address of the database
-        'PORT' : '3306', # port number of database server
+        'PORT' : '5432', # port number of database server
     }
 }
 
@@ -128,12 +128,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
 
-STATIC_ROOT= os.path.join(BASE_DIR, 'static')
-STATIC_URL = '/static/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media_cdn')
+STATIC_ROOT= os.path.join(BASE_DIR, 'static_cdn')
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'loginmodule/static')
+    os.path.join(BASE_DIR, 'static')
 ]
+
+BASE_URL = "http://127.0.0.1:8000"
 
 ASGI_APPLICATION = "connectus.routing.application"
 

@@ -1,0 +1,61 @@
+<!-- @format -->
+
+{% extends 'loginmodule/base.html' %} {% block content %}
+
+{% include 'form_css.html' %}
+
+<br /><br />
+<div class="container-fluid">
+	<div class="row justify-content-center">
+		<div class="card card-signin shadow-lg">
+		  <div class="card-body">
+			<form class="form-signin"  method="POST">
+                {% csrf_token %}
+				<h1 style="color: rgb(48, 44, 39)">Login</h1>
+				<div class="mb-3 form-group">
+					<div class="row-auto  align-items-center justify-content-center " >
+							<input
+								name="email"
+								type="email"
+								id="inputemail"
+								class="form-control"
+								placeholder="Email address"
+								aria-describedby="EmailHelpInline"
+							/>
+					</div>
+				</div>
+				<div class="mb-3 form-group">
+					<div class="row-auto g-3 align-items-center justify-content-center">
+							<input
+								type="password"
+								id="inputPassword6"
+								placeholder="Password"
+								class="form-control"
+								aria-describedby="passwordHelpInline"
+								name="password"
+							/>
+					</div>
+				</div>
+				{% for field in login_form %}
+				<p>
+				{% for error in field.errors %}
+				<p style="color: red">{{ error }}</p>
+				{% endfor %}
+				</p>
+				{% endfor %}
+				{% if login_form.non_field_errors %}
+				<div style="color: red">
+				<p>{{login_form.non_field_errors}}</p>
+				</div>
+				{% endif %}
+
+				<button type="submit" class="btn btn-success w-100 ">
+					Submit
+				</button>
+			</form>
+		</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

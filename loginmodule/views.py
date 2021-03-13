@@ -16,6 +16,7 @@ def login(request):
         return redirect("home")
 
 
+
     if request.POST:
         form = AccountAuthenticationForm(request.POST)
         if form.is_valid():
@@ -25,25 +26,26 @@ def login(request):
 
             if user:
                 auth.login(request,user)
-                return render(request,"home.html")
+                return redirect("home")
+
 
         else:
             context['login_form'] =form
-    return render(request, "login.html", context)
+    return render(request, "loginmodule/login.html", context)
 
 
 def contact_us(request):
     c = {}
     c.update(csrf(request))
-    return render(request,"contact_us.html")
+    return render(request,"loginmodule/contact_us.html")
 
 def logout(request):
     auth.logout(request)
-    return render(request, "logout.html")
+    return render(request, "loginmodule/logout.html")
 
 
 def home_screen(request):
-    return render(request, "home_screen.html")
+    return render(request, "loginmodule/home_screen.html")
 
 
 def sign_up(request):
@@ -63,11 +65,11 @@ def sign_up(request):
             account = auth.authenticate(email=email,password=raw_password)
 
             auth.login(request, account)
-            return render(request,"home.html")
+            return redirect("home")
     
 
         else:
             context['registration_form'] = form
 
-    return render(request,'sign_up.html', context)
+    return render(request,'loginmodule/sign_up.html', context)
 
