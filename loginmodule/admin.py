@@ -10,15 +10,15 @@ class UserAdminConfig(UserAdmin):
 
 
     fieldsets = (
-        (None,{'fields':('email','username','name')}),
+        (None,{'fields':('email','username','name','profile_image')}),
         ('Permissions',{'fields':('is_staff','is_active')}),
-        ('Personal',{'fields':('about','friends')})
+        ('Personal',{'fields':('about',)})
     )
 
     add_fieldsets = (
         (None, {
             'classes':('wide',),
-            'fields':('email','username','name','password1','password2','friends','is_active','is_staff')
+            'fields':('email','username','name','password1','password2','is_active','is_staff','profile_image')
         }),
     )
 
