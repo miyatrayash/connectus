@@ -7,7 +7,7 @@
             <div class="justify-content-start">
                 <a href="{% url 'home' %}"><img src="{% static 'img/logo.png' %}" width="50" height="50" alt="Home"></a>
             </div>
-            <form class="ms-3 search-bar justify-content-start">
+            <form class="ms-3 search-bar justify-content-start" onsubmit="return executeQuery();">
                 <input type="text" class="form-control" name="q" id="id_q_large" placeholder="Search...">
             </form>
 
@@ -91,3 +91,17 @@
         </div>
         <!-- END SMALL SCREENS -->
     </div>
+<script type="text/javascript">
+
+    function executeQuery(){
+        var query = document.getElementById("id_q_small").value
+
+        if(query == ""){
+            query = document.getElementById("id_q_large").value
+        }
+        window.location.replace("{% url 'search' %}?q=" + query)
+        return false
+    }
+
+
+</script>
