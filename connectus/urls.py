@@ -13,7 +13,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 from chat.views import home
@@ -26,5 +27,11 @@ urlpatterns = [
     path('sign_up/',sign_up,name="sign_up"),
     path('', home_screen,name="home_screen"),
     path('contact_us/',contact_us,name="contact_us"),
-    path('home/',home,name='home')
+    path('home/',home,name='home'),
+    path('account/',include('chat.urls',namespace='account'))
 ]
+
+
+if settings.DEBUG:
+    urlpatterns+= static(settings.STATIC_URL,document_root=settings.STATIC_ROOT)
+    urlpatterns+= static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
