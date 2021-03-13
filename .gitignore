@@ -6,5 +6,4 @@ desktop.ini
 *.pyc
 __pycache__/
 migrations/
-bootstrap/
 static_cdn/admin/
