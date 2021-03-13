@@ -7,4 +7,4 @@ desktop.ini
 __pycache__/
 migrations/
 bootstrap/
-static_cdn/admin
+static_cdn/admin/
