@@ -41,6 +41,7 @@ def get_profile_image_filepath(self,filename):
     return f'img/profile_images/{self.pk}/profile_image.png'
 
 
+
 def get_default_profile_image():
     return "/img/default/Avatar_Dog.png"
 class User(AbstractBaseUser, PermissionsMixin):

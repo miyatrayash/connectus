@@ -1,7 +1,17 @@
-from django.shortcuts import render
+from loginmodule.forms import AccountUpdateForm
+from django.shortcuts import redirect, render
 from loginmodule.models import User
 from django.http import HttpResponse
 from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+from django.core import files
+
+import os
+import cv2
+import json
+import base64
+TEMP_PROFILE_IMAGE_NAME = "temp_profile_image.png"
+
 # Create your views here.
 def home(request):
     return render(request,"chat/home.html",{"fullname": request.user.username})
@@ -22,6 +32,7 @@ def account_view(request, *args,**kwargs):
         context['profile_image'] = user.profile_image.url
         context['hide_email'] = user.hide_email
         context['email'] = user.email
+
 
 
         #Define state Template variable
@@ -56,3 +67,119 @@ def account_search_view(request,*args,**kwargs):
             context['accounts'] = accounts
 
     return render(request, "account/search_results.html",context)
+
+
+def edit_account_view(request,*args,**kwargs):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+
+    user_id = kwargs.get("user_id")
+    print(request.user.profile_image.url)
+    try:
+        account = User.objects.get(pk=user_id)
+
+    except User.DoesNotExist:
+        return HttpResponse("something went wrong")
+
+
+    if account.pk != request.user.pk:
+        return HttpResponse("You cant edit someone else")
+
+    
+    context = {}
+    context['DATA_UPLOAD_MAX_MEMORY_SIZE'] = settings.DATA_UPLOAD_MAX_MEMORY_SIZE
+    if request.POST:
+        form = AccountUpdateForm(request.POST,request.FILES,instance=request.user)
+
+        if form.is_valid():
+            form.save()
+            return redirect("account:view",user_id=account.pk)
+        else:
+            form = AccountUpdateForm(request.POST, instance=request.user,
+            initial= {
+                "id": account.pk,
+                "email": account.email,
+                "username": account.username,
+                "profile_image": account.profile_image,
+                "hide_email": account.hide_email,
+            }
+            )
+            context['form'] = form
+    else:
+        form = AccountUpdateForm(
+            initial= {
+                "id": account.pk,
+                "email": account.email,
+                "username": account.username,
+                "profile_image": account.profile_image,
+                "hide_email": account.hide_email,
+            }
+        )
+        context['form'] = form
+
+    
+    return render(request,"account/edit_account.html", context)
+    
+
+
+def save_temp_profile_image_from_base64String(imageString, user):
+    INCORRECT_PADDING_EXCEPTION = "Incorrect padding"
+
+    try:
+
+        if not os.path.exists(settings.TEMP):
+            os.mkdir(settings.TEMP)
+        if not os.path.exists(f"{settings.TEMP}/{str(user.pk)}"):
+            os.mkdir(settings.TEMP + "/" + str(user.pk))
+        url = os.path.join(settings.TEMP + "/" + str(user.pk),TEMP_PROFILE_IMAGE_NAME)
+        storage = FileSystemStorage(location=url)
+        image = base64.b64decode(imageString)
+        with storage.open('', 'wb+') as destination:
+            destination.write(image)
+            destination.close()
+
+        return url
+    except Exception as e:
+        if str(e) == INCORRECT_PADDING_EXCEPTION:
+            imageString += "=" * ((4 - len(imageString) % 4) % 4)
+            return save_temp_profile_image_from_base64String(imageString,user)
+        return None
+
+def crop_image(request,*args,**kwargs):
+    payload = {}
+
+    user = request.user
+
+    if request.POST and user.is_authenticated:
+        try:
+            imageString = request.POST.get("image")
+            url = save_temp_profile_image_from_base64String(imageString,user)
+            img = cv2.imread(url)
+            cropX = int(float(str(request.POST.get("cropX"))))
+            cropY = int(float(str(request.POST.get("cropY"))))
+            cropWidth = int(float(str(request.POST.get("cropWidth"))))
+            cropHeight = int(float(str(request.POST.get("cropHeight"))))
+
+            if cropX < 0:
+                cropX = 0
+            if cropY < 0:
+                cropY = 0
+
+            crop_image = img[cropY:cropY + cropHeight,cropX:cropX + cropWidth]
+
+            cv2.imwrite(url,crop_image)
+
+            user.profile_image.delete()
+            user.profile_image.save("profile_image.png",files.File(open(url,"rb")))
+            user.save()
+
+            payload['result'] = "success"
+            payload['cropped_profile_image'] = user.profile_image.url
+
+            os.remove(url)
+        except Exception as e:
+            payload['result'] = 'error'
+            payload['exception'] = str(e)
+
+    return HttpResponse(json.dumps(payload),content_type="application/json")

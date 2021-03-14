@@ -2,8 +2,9 @@
 
 settings.json
 desktop.ini
-*/.vscode/*
+**/.vscode/**
 *.pyc
 __pycache__/
-migrations/
+**/migrations/**
 static_cdn/admin/
+**/profile_images/**
