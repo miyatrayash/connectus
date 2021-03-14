@@ -85,9 +85,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'connectus',
         'USER': 'postgres', #user name for the database
-        'PASSWORD' : 'root', # password
+        'PASSWORD' : 'yash', # password
         'HOST' : '127.0.0.1', # IP address of the database
-        'PORT' : '5432', # port number of database server
+        'PORT' : '5432', #ort number of database server
     }
 }
 
@@ -130,8 +130,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media_cdn')
-STATIC_ROOT= os.path.join(BASE_DIR, 'static_cdn')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media_cdn/')
+STATIC_ROOT= os.path.join(BASE_DIR, 'static_cdn/')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
