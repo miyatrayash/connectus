@@ -139,5 +139,8 @@ STATICFILES_DIRS = [
 BASE_URL = "http://127.0.0.1:8000"
 
 ASGI_APPLICATION = "connectus.routing.application"
+TEMP = os.path.join(BASE_DIR,'media_cdn/temp')
+
 
 AUTH_USER_MODEL = 'loginmodule.User'
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760 # 10 MB

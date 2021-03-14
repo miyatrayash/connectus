@@ -5,13 +5,19 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+<<<<<<< HEAD
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
 	<link rel="stylesheet" href="{%static 'style.css'%}">
+=======
+	<link rel="stylesheet" href="{% static 'cropperjs/dist/cropper.min.css' %}">
+	<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+>>>>>>> 7fe99496743c5755eb74e83001e71e5c35c01b83
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <title>connect us</title>
 </head>
 
 <header>{% include 'header.html' %}</header>
+<body>
 <!-- Body -->
 <style type="text/css">
 	.main{
@@ -19,19 +25,42 @@
 		height: 100%;
 	}
 </style>
+<div class="container" id="id_loading_spinner" style="display: none;">
+	<div class="d-flex flex-row mx-auto flex-grow-1 justify-content-center">
+		<div class="spinner-border text-primary" role="status">
+			<span class="sr-only">Loading...</span>
+		</div>
+	</div>
+</div>
 <div class="main">
+	
 	{% block content %}
 
 	{% endblock content %}
 </div>
 <!-- End Body -->
-
+</body>
 <footer>{% include 'footer.html' %}</footer>
 
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
 <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<<<<<<< HEAD
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/js/bootstrap.bundle.min.js"
     integrity="sha384-BOsAfwzjNJHrJ8cZidOg56tcQWfp6y72vEJ8xQ9w6Quywb24iOsW913URv1IS4GD"
     crossorigin="anonymous"></script>
 
+=======
+<script type="module" src="{% static 'cropperjs/dist/cropper.min.js' %}"></script>
+<script type="text/javascript">
+	function displayLoadingSpinner(isDisplayed){
+		var spinner = document.getElementById("id_loading_spinner")
+		if(isDisplayed){
+			spinner.style.display = "block"
+		}
+		else{
+			spinner.style.display = "none"
+		}
+	}
+</script>
+>>>>>>> 7fe99496743c5755eb74e83001e71e5c35c01b83
 </html>
