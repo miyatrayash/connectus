@@ -1,11 +1,14 @@
-from loginmodule.forms import AccountUpdateForm
+from friends.views import friend_list_view
+from friends.models import FriendList, FriendRequest
 from django.shortcuts import redirect, render
 from loginmodule.models import User
 from django.http import HttpResponse
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.core import files
-
+from friends.utils import get_friend_request_or_false
+from friends.friends_request_status import FriendRequestStatus
+from friends.models import FriendList
 import os
 import cv2
 import json
@@ -35,36 +38,67 @@ def account_view(request, *args,**kwargs):
 
 
 
-        #Define state Template variable
+        try:
+            friend_list = FriendList.objects.get(user=user)
+        except FriendList.DoesNotExist:
+            friend_list = FriendList(user=user)
+            friend_list.save()
+    
+        friends = friend_list.friends.all()
+        context['friends'] =  friends
 
         is_self = True
         is_friends = False
 
-        
-        if user.is_authenticated and user != request.user or not request.user.is_authenticated:
+        viewer = request.user
+        request_sent = FriendRequestStatus.NO_REQUEST_SENT.value
+        friend_requests = None
+        if viewer.is_authenticated and viewer != user or not viewer.is_authenticated:
             is_self = False
+            if friends.filter(pk=viewer.id):
+                is_friends = True
+            else:
 
+                if get_friend_request_or_false(sender=user,receiver=viewer) != False:
+                    request_sent = FriendRequestStatus.THEM_SENT_TO_YOU.value
+                    context['pending_friend_request_id'] = get_friend_request_or_false(sender=user,receiver=viewer).id
+                    # print(context['pending_friend_request_id'])
+                elif get_friend_request_or_false(sender=viewer,receiver=user) != False:
+                    request_sent = FriendRequestStatus.YOU_SENT_TO_THEM.value
+
+        else:
+            try:
+                friend_requests = FriendRequest.objects.filter(receiver=viewer,is_active=True)
+            except FriendRequest.DoesNotExist:
+                pass
+        
         context['is_self'] = is_self
         context['is_friend'] = is_friends
 
         context['BASE_URL'] = settings.BASE_URL
+        context['request_sent'] = request_sent
+        context['friend_requests'] = friend_requests
 
         return render(request,"account/account.html",context)
 
 
 def account_search_view(request,*args,**kwargs):
     context = {}
-    print("here")
     if request.method == 'GET':
         search_query =request.GET.get("q")
         if len(search_query) > 0:
             search_results = User.objects.filter(email__icontains=search_query).filter(username__icontains=search_query).distinct()
 
-            accounts = []
+            users = []
 
-            for account in search_results:
-                accounts.append((account,False))
-            context['accounts'] = accounts
+            for user in search_results:
+                try:
+                    friend_list = FriendList.objects.get(user=request.user,friends__id=user.id)
+                    is_friend = True
+                except FriendList.DoesNotExist:
+                    is_friend = False
+                users.append((user,is_friend))
+            context['accounts'] = users
 
     return render(request, "account/search_results.html",context)
 
@@ -77,49 +111,49 @@ def edit_account_view(request,*args,**kwargs):
     user_id = kwargs.get("user_id")
     print(request.user.profile_image.url)
     try:
-        account = User.objects.get(pk=user_id)
+        user = User.objects.get(pk=user_id)
 
     except User.DoesNotExist:
         return HttpResponse("something went wrong")
 
 
-    if account.pk != request.user.pk:
+    if user.pk != request.user.pk:
         return HttpResponse("You cant edit someone else")
 
     
     context = {}
     context['DATA_UPLOAD_MAX_MEMORY_SIZE'] = settings.DATA_UPLOAD_MAX_MEMORY_SIZE
     if request.POST:
-        form = AccountUpdateForm(request.POST,request.FILES,instance=request.user)
+        form = userUpdateForm(request.POST,request.FILES,instance=request.user)
 
         if form.is_valid():
             form.save()
-            return redirect("account:view",user_id=account.pk)
+            return redirect("account:view",user_id=user.pk)
         else:
-            form = AccountUpdateForm(request.POST, instance=request.user,
+            form = userUpdateForm(request.POST, instance=request.user,
             initial= {
-                "id": account.pk,
-                "email": account.email,
-                "username": account.username,
-                "profile_image": account.profile_image,
-                "hide_email": account.hide_email,
+                "id": user.pk,
+                "email": user.email,
+                "username": user.username,
+                "profile_image": user.profile_image,
+                "hide_email": user.hide_email,
             }
             )
             context['form'] = form
     else:
-        form = AccountUpdateForm(
+        form = userUpdateForm(
             initial= {
-                "id": account.pk,
-                "email": account.email,
-                "username": account.username,
-                "profile_image": account.profile_image,
-                "hide_email": account.hide_email,
+                "id": user.pk,
+                "email": user.email,
+                "username": user.username,
+                "profile_image": user.profile_image,
+                "hide_email": user.hide_email,
             }
         )
         context['form'] = form
 
     
-    return render(request,"account/edit_account.html", context)
+    return render(request,"account/edit_user.html", context)
     
 
 

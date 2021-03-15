@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'loginmodule',
     'chat',
+    'friends'
 ]
 
 MIDDLEWARE = [
@@ -60,6 +61,7 @@ TEMPLATES = [
         'DIRS': [
             os.path.join(BASE_DIR, 'loginmodule/templates'),
             os.path.join(BASE_DIR, 'chat/templates'),
+            os.path.join(BASE_DIR, 'friends/templates'),
             ],
         
         'APP_DIRS': True,
