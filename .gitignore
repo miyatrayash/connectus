@@ -1,6 +1,5 @@
 #visual studio files
 
-settings.json
 desktop.ini
 **/.vscode/**
 *.pyc
@@ -8,3 +7,5 @@ __pycache__/
 **/migrations/**
 static_cdn/admin/
 **/profile_images/**
+
+.vscode/settings.json
