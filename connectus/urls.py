@@ -21,6 +21,7 @@ from django.urls import include, path
 from chat.views import home
 from loginmodule.views import login,logout,sign_up,home_screen,contact_us
 from chat.views import account_search_view
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', login,name="login"),
@@ -31,6 +32,7 @@ urlpatterns = [
     path('home/',home,name='home'),
     path('account/',include('chat.urls',namespace='account')),
     path('search/',account_search_view, name="search"),
+    path('friends/',include('friends.urls',namespace='friends')),
 
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(template_name='password_reset/password_change_done.html'), 
         name='password_change_done'),

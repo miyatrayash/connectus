@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'loginmodule',
     'chat',
+    'friends'
 ]
 
 MIDDLEWARE = [
@@ -60,6 +61,7 @@ TEMPLATES = [
         'DIRS': [
             os.path.join(BASE_DIR, 'loginmodule/templates'),
             os.path.join(BASE_DIR, 'chat/templates'),
+            os.path.join(BASE_DIR, 'friends/templates'),
             ],
         
         'APP_DIRS': True,
@@ -87,7 +89,7 @@ DATABASES = {
         'USER': 'postgres', #user name for the database
         'PASSWORD' : 'root', # password
         'HOST' : '127.0.0.1', # IP address of the database
-        'PORT' : '5432', # port number of database server
+        'PORT' : '5432', #ort number of database server
     }
 }
 
@@ -130,10 +132,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media_cdn')
-STATIC_ROOT= os.path.join(BASE_DIR, 'static_cdn')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media_cdn/')
+STATIC_ROOT= os.path.join(BASE_DIR, 'static_cdn/')
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
+    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'media'),
 ]
 
 BASE_URL = "http://127.0.0.1:8000"
