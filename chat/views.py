@@ -179,8 +179,7 @@ def crop_image(request,*args,**kwargs):
             crop_image = img[cropY:cropY + cropHeight,cropX:cropX + cropWidth]
 
             cv2.imwrite(url,crop_image)
-
-            if user.profile_image != get_default_profile_image():
+            if user.profile_image.url != os.path.join("/media/", get_default_profile_image()):
                 user.profile_image.delete()
             user.profile_image.save("profile_image.png",files.File(open(url,"rb")))
             user.save()
