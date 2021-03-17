@@ -43,7 +43,6 @@ service-identity==18.1.0
 six==1.15.0
 sqlparse==0.4.1
 toml==0.10.2
-tortoise-orm==0.16.21
 Twisted==21.2.0
 twisted-iocpsupport==1.0.1
 txaio==21.2.1
