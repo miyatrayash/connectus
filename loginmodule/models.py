@@ -43,7 +43,7 @@ def get_profile_image_filepath(self,filename):
 
 
 def get_default_profile_image():
-    return "/img/default/Avatar_Dog.png"
+    return "img/default/Avatar_Dog.png"
 class User(AbstractBaseUser, PermissionsMixin):
     id              = models.AutoField(primary_key=True)
     email           = models.EmailField(_('email address'), unique=True)
