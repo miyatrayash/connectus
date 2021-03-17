@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -78,7 +79,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'connectus.wsgi.application'
 
+ASGI_APPLICATION = "connectus.routing.application"
 
+CHANNEL_LAYERS = {
+    'default':{
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+    },
+}
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
@@ -141,7 +148,6 @@ STATICFILES_DIRS = [
 
 BASE_URL = "http://127.0.0.1:8000"
 
-ASGI_APPLICATION = "connectus.routing.application"
 TEMP = os.path.join(BASE_DIR,'media_cdn/temp')
 
 

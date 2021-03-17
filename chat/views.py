@@ -14,6 +14,13 @@ import os
 import cv2
 import json
 # Create your views here.
+
+def public_chat_view(request):
+    context = {}
+    context['debug_mode'] = settings.DEBUG
+    context['room_id']  = 1
+    return render(request,"chat/public_chat.html",context)
+
 def home(request):
     return render(request,"chat/home.html",{"fullname": request.user.username})
 

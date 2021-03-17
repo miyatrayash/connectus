@@ -18,7 +18,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
-from chat.views import home
+from chat.views import home, public_chat_view
 from loginmodule.views import login,logout,sign_up,home_screen,contact_us
 from chat.views import account_search_view
 
@@ -33,6 +33,7 @@ urlpatterns = [
     path('account/',include('chat.urls',namespace='account')),
     path('search/',account_search_view, name="search"),
     path('friends/',include('friends.urls',namespace='friends')),
+    path('public_chat',public_chat_view,name="public_chat"),
 
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(template_name='password_reset/password_change_done.html'), 
         name='password_change_done'),
