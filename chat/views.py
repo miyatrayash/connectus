@@ -1,3 +1,4 @@
+from chat.filters import UserFilter
 from chat.utils import save_temp_profile_image_from_base64String
 from loginmodule.forms import AccountUpdateForm
 from friends.views import friend_list_view
@@ -92,17 +93,22 @@ def account_search_view(request,*args,**kwargs):
     if request.method == 'GET':
         search_query =request.GET.get("q")
         if len(search_query) > 0:
-            search_results = User.objects.filter(email__icontains=search_query).filter(username__icontains=search_query).distinct()
+            user_list = User.objects.all()
+            user_filter = UserFilter(request.GET, queryset=user_list)
 
             users = []
 
-            for user in search_results:
+            for user in user_filter.qs:
                 try:
                     friend_list = FriendList.objects.get(user=request.user,friends__id=user.id)
                     is_friend = True
                 except FriendList.DoesNotExist:
                     is_friend = False
                 users.append((user,is_friend))
+
+
+
+
             context['accounts'] = users
 
     return render(request, "account/search_results.html",context)
@@ -182,7 +188,7 @@ def crop_image(request,*args,**kwargs):
             if cropY < 0:
                 cropY = 0
 
-
+            print(url)
             crop_image = img[cropY:cropY + cropHeight,cropX:cropX + cropWidth]
 
             cv2.imwrite(url,crop_image)

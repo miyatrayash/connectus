@@ -24,7 +24,7 @@ def save_temp_profile_image_from_base64String(imageString, user):
         with storage.open('', 'wb+') as destination:
             destination.write(image)
             destination.close()
-        return urlp
+        return url
     except Exception as e:
         if str(e) == INCORRECT_PADDING_EXCEPTION:
             imageString += "=" * ((4 - len(imageString) % 4) % 4)
