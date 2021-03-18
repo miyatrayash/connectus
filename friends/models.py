@@ -7,7 +7,6 @@ from django.utils import timezone
 
 class FriendList(models.Model):
     user        = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="user")
-
     friends     = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True,related_name="friends")
 
 
@@ -18,13 +17,13 @@ class FriendList(models.Model):
 
         if not user in self.friends.all():
             self.friends.add(user)
-        
+
     def remove_friend(self, user):
 
         if user in self.friends.all():
             self.friends.remove(user)
 
-    
+
     def unfriend(self,removee):
 
         remover_friend_list = self
@@ -51,7 +50,6 @@ class FriendRequest(models.Model):
     is_active       = models.BooleanField(blank=True,null=False,default=True)
     timestamp        = models.DateTimeField(auto_now=True)
 
-
     def __str__(self) -> str:
         return self.sender.username
 
@@ -71,11 +69,9 @@ class FriendRequest(models.Model):
         self.is_active = False
         self.save()
 
-    
+
     def cancel(self):
         self.is_active = False
         self.save()
 
 
-
-    
