@@ -13,7 +13,7 @@ def login(request):
     user = request.user
 
     if user.is_authenticated:
-        return redirect("home")
+        return redirect("public_chat")
 
 
 
@@ -26,7 +26,7 @@ def login(request):
 
             if user:
                 auth.login(request,user)
-                return redirect("home")
+                return redirect("public_chat")
 
 
         else:
@@ -65,7 +65,7 @@ def sign_up(request):
             account = auth.authenticate(email=email,password=raw_password)
 
             auth.login(request, account)
-            return redirect("home")
+            return redirect("public_chat")
     
 
         else:

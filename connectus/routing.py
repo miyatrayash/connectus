@@ -10,7 +10,6 @@ from chat.consumers import PublicChatConsumer
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'connectus.settings')
 
 application = ProtocolTypeRouter({
-    "http": get_asgi_application(),
     'websocket': AllowedHostsOriginValidator(
         AuthMiddlewareStack(
             URLRouter([

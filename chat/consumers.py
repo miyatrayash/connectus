@@ -4,49 +4,92 @@ from django.contrib.auth import get_user_model
 from django.contrib.humanize.templatetags.humanize import naturaltime, naturalday
 from django.utils import timezone
 from datetime import datetime
+from channels.db import database_sync_to_async
+from django.core.paginator import Paginator
+from django.core.serializers import serialize
+from django.core.serializers.python import Serializer
 
+from chat.models import PublicChatRoom, PublicRoomChatMessage
+count = 0
 User = get_user_model()
-MSG_TYPE_MESSAGE = 0 
+MSG_TYPE_MESSAGE = 0
+DEFAULT_ROOM_CHAT_MESSAGE_PAGE_SIZE = 10
 class PublicChatConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
-        
+        global count
         print("PublicChatConsumer: connect: " + str(self.scope['user']))
-        
+        print(f"Connect: {count}")
+        count += 1
         await self.accept()
+        self.room_id = None
 
-
-        await self.channel_layer.group_add(
-            "public_chatroom_1",
-            self.channel_name
-        )
 
     async def disconnect(self, code):
-        
+
+        global count
         print("PublicChatConsumer: disconnect")
+        print(f"DisConnect: {count}")
+        count += 1
+        try:
+            if self.room_id != None:
+                await self.leave_room(self.room_id)
+        except Exception:
+            pass
 
     async def receive_json(self, content, **kwargs):
-        
+
+        global count
         command = content.get("command", None)
-        
+        print(f"Receive_json: {count}")
+        count += 1
+
         print("PublicChatConsumer: receive_json: " + str(command))
-        print("PublicChatConsumer: receive_json: message: " + str(content["message"]))
 
         try:
             if command == "send":
-                if len(content["message"].lstrip()) == 0:
-                    raise ClientError(422,"You can't send an empty message.")
-                await self.send_message(content["message"])
+                if len(content["message"].lstrip()) != 0:
+                    # raise ClientError(422,"You can't send an empty message.")
+                    await self.send_room(content["room_id"], content["message"])
+            elif command == "join":
+                # Make them join the room
+                await self.join_room(content["room"])
+            elif command == "leave":
+            # Leave the room
+                await self.leave_room(content["room"])
+            elif command == "get_room_chat_messages":
+                room = await get_room_or_error(content['room_id'])
+                payload = await get_room_chat_messages(room, content['page_number'])
+                if payload != None:
+                    payload = json.loads(payload)
+                    await self.send_messages_payload(payload['messages'], payload['new_page_number'])
+                else:
+                    raise ClientError(204,"Something went wrong retrieving the chatroom messages.")
         except ClientError as e:
-            # Catch any errors and send it back
-            errorData = {}
-            errorData['error'] = e.code
-            if e.message:
-                errorData['message'] = e.message
-            await self.send_json(errorData)
+            await self.handle_client_error(e)
 
-    async def send_message(self,message):
+
+    async def send_room(self, room_id, message):
+        """
+            Called by receive_json when someone sends a message to a room.
+        """
+    # Check they are in this room
+        global count
+        print(f"Send_room: {count}")
+        count +=1
+        print("PublicChatConsumer: send_room")
+        if self.room_id != None:
+            if str(room_id) != str(self.room_id):
+                raise ClientError("ROOM_ACCESS_DENIED", "Room access denied")
+            if not is_authenticated(self.scope["user"]):
+                raise ClientError("AUTH_ERROR", "You must be authenticated to chat.")
+        else:
+            raise ClientError("ROOM_ACCESS_DENIED", "Room access denied")
+
+        # Get the room and send to the group about it
+        room = await get_room_or_error(room_id)
+        await create_public_room_chat_message(room,self.scope["user"], message)
         await self.channel_layer.group_send(
-            "public_chatroom_1",
+            room.group_name,
             {
                 "type": "chat.message",
                 "profile_image": self.scope["user"].profile_image.url,
@@ -58,9 +101,11 @@ class PublicChatConsumer(AsyncJsonWebsocketConsumer):
         )
 
     async def chat_message(self,event):
-
+        global count
+        print(f"Chat_message: {count}")
+        count += 1
         print("PublicChatConsumer: chat_message from user #" + str(event["user_id"]))
-        timestamp = calculate_timestamp(timezone.now())
+        timestamp = calculate_timestamp(timezone.localtime(timezone.now()))
         await self.send_json(
             {
                 "msg_type": MSG_TYPE_MESSAGE,
@@ -72,7 +117,149 @@ class PublicChatConsumer(AsyncJsonWebsocketConsumer):
             }
         )
 
+    async def join_room(self, room_id):
+            global count
+            print(f"Join_room: {count}")
+            count += 1
+            """
+            Called by receive_json when someone sent a join command.
+            """
+            print("PublicChatConsumer: join_room")
+            is_auth = is_authenticated(self.scope["user"])
+            print("here")
+            try:
+                room = await get_room_or_error(room_id)
+            except ClientError as e:
+                await self.handle_client_error(e)
 
+            # Add user to "users" list for room
+            if is_auth:
+                await connect_user(room, self.scope["user"])
+
+            # Store that we're in the room
+            self.room_id = room.id
+
+            # Add them to the group so they get room messages
+            await self.channel_layer.group_add(
+                room.group_name,
+                self.channel_name,
+            )
+
+            # Instruct their client to finish opening the room
+            await self.send_json({
+                "join": str(room.id)
+            })
+
+
+    async def leave_room(self, room_id):
+
+        """
+        Called by receive_json when someone sent a leave command.
+        """
+        print("PublicChatConsumer: leave_room")
+        global count
+        print(f"Leave Room: {count}")
+        count += 1
+        is_auth = is_authenticated(self.scope["user"])
+        room = await get_room_or_error(room_id)
+
+        # Remove user from "users" list
+        if is_auth:
+            await disconnect_user(room, self.scope["user"])
+
+        # Remove that we're in the room
+        self.room_id = None
+        # Remove them from the group so they no longer get room messages
+        await self.channel_layer.group_discard(
+            room.group_name,
+            self.channel_name,
+        )
+
+    async def handle_client_error(self, e):
+            """
+            Called when a ClientError is raised.
+            Sends error data to UI.
+            """
+            errorData = {}
+            errorData['error'] = e.code
+            if e.message:
+                errorData['message'] = e.message
+                await self.send_json(errorData)
+
+    async def send_messages_payload(self, messages, new_page_number):
+        """
+		Send a payload of messages to the ui
+		"""
+        print("PublicChatConsumer: send_messages_payload. ")
+        await self.send_json(
+			{
+				"messages_payload": "messages_payload",
+				"messages": messages,
+				"new_page_number": new_page_number,
+			},
+		)
+
+def is_authenticated(user):
+    if user.is_authenticated:
+        return True
+    return False
+
+@database_sync_to_async
+def create_public_room_chat_message(room, user, message):
+    return PublicRoomChatMessage.objects.create(user=user,room=room, content=message)
+
+@database_sync_to_async
+def connect_user(room, user):
+    global count
+    print(f"Connect User: {count}")
+    count += 1
+    return room.connect_user(user)
+
+@database_sync_to_async
+def disconnect_user(room, user):
+    global count
+    print(f"DisConnect User: {count}")
+    count += 1
+    return room.disconnect_user(user)
+
+@database_sync_to_async
+def get_room_or_error(room_id):
+
+    try:
+        rooms = PublicChatRoom.objects.all()
+        if len(rooms) < 1:
+            room = PublicChatRoom.objects.create(pk=room_id)
+        else:
+            room = PublicChatRoom.objects.get(pk=room_id)
+
+    except PublicChatRoom.DoesNotExist:
+        raise ClientError("ROOM_INVALID", "Invalid room.")
+
+    return room
+
+@database_sync_to_async
+def get_room_chat_messages(room, page_number):
+    try:
+        qs = PublicRoomChatMessage.objects.filter(room=room).order_by("timestamp")
+        p = Paginator(qs, DEFAULT_ROOM_CHAT_MESSAGE_PAGE_SIZE)
+        payload = {}
+        messages_data = None
+        new_page_number = int(page_number)
+
+        if new_page_number <= p.num_pages:
+            new_page_number = new_page_number + 1
+            s = LazyRoomChatMessageEncoder()
+            payload['messages'] = s.serialize(p.page(page_number).object_list)
+
+        else:
+            payload['messages'] = "None"
+            payload['new_page_number'] = new_page_number
+        payload['new_page_number'] = new_page_number
+        return json.dumps(payload)
+
+    except Exception as e:
+        print("EXCEPTION: " + str(e))
+        return None
 class ClientError(Exception):
     """
     Custom exception class that is caught by the websocket receive()
@@ -105,3 +292,14 @@ def calculate_timestamp(timestamp):
         str_time = datetime.strftime(timestamp, "%m/%d/%Y")
         ts = f"{str_time}"
     return str(ts)
+
+class LazyRoomChatMessageEncoder(Serializer):
+	def get_dump_object(self, obj):
+		dump_object = {}
+		dump_object.update({'msg_type': MSG_TYPE_MESSAGE})
+		dump_object.update({'user_id': str(obj.user.id)})
+		dump_object.update({'username': str(obj.user.username)})
+		dump_object.update({'message': str(obj.content)})
+		dump_object.update({'profile_image': str(obj.user.profile_image.url)})
+		dump_object.update({'natural_timestamp': calculate_timestamp(obj.timestamp)})
+		return dump_object

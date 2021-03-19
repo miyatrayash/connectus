@@ -14,7 +14,6 @@ from friends.models import FriendList
 import os
 import cv2
 import json
-# Create your views here.
 
 def public_chat_view(request):
     context = {}

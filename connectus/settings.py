@@ -83,7 +83,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'connectus.wsgi.application'
 
-ASGI_APPLICATION = "connectus.routing.application"
+ASGI_APPLICATION = 'connectus.routing.application'
+
 
 CHANNEL_LAYERS = {
     'default':{
@@ -128,7 +129,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Kolkata'
 
 USE_I18N = True
 
