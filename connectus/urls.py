@@ -19,8 +19,7 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
 from chat.views import home, public_chat_view
-from loginmodule.views import login,logout,sign_up,home_screen,contact_us
-from chat.views import account_search_view
+from loginmodule.views import login,logout,sign_up,home_screen,contact_us, account_search_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -30,7 +29,7 @@ urlpatterns = [
     path('', home_screen,name="home_screen"),
     path('contact_us/',contact_us,name="contact_us"),
     path('home/',home,name='home'),
-    path('account/',include('chat.urls',namespace='account')),
+    path('account/',include('loginmodule.urls',namespace='account')),
     path('search/',account_search_view, name="search"),
     path('friends/',include('friends.urls',namespace='friends')),
     path('public_chat',public_chat_view,name="public_chat"),
