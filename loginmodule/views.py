@@ -27,7 +27,7 @@ def login(request):
     user = request.user
 
     if user.is_authenticated:
-        return redirect("public_chat")
+        return redirect("chat:private-chat-room")
 
 
 
@@ -40,7 +40,7 @@ def login(request):
 
             if user:
                 auth.login(request,user)
-                return redirect("public_chat")
+                return redirect("chat:private-chat-room")
 
 
         else:

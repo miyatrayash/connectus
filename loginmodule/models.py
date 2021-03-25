@@ -1,8 +1,10 @@
 from django.db import models
-from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
+from friends.models import FriendList
 class AccountManager(BaseUserManager):
 
     def create_user(self, email, username, name, password):
@@ -71,3 +73,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def has_module_perms(self, app_label):
         return True
+
+
+@receiver(post_save,sender=User)
+def user_save(sender, instance, **kwargs):
+    FriendList.objects.get_or_create(user=instance)
+
