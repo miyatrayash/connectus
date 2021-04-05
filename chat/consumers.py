@@ -296,12 +296,14 @@ def disconnect_user(room, user):
 
 @database_sync_to_async
 def get_room_or_error(room_id):
-
+    print(f"\n\n\n\n\n\n\n\n {room_id} \n\n\n\n\n\n\n\n\n\n")
     try:
         rooms = PublicChatRoom.objects.all()
         if len(rooms) < 1:
             room = PublicChatRoom.objects.create(pk=room_id)
         else:
+            print("\n\n\nhere\n\n\n")
+
             room = PublicChatRoom.objects.get(pk=room_id)
 
     except PublicChatRoom.DoesNotExist:
@@ -371,7 +373,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             elif command == "get_room_chat_messages":
                 print("Getting messages\n\n\n\n\n\n\n")
                 await self.display_progress_bar(True)
-                payload = await get_room_chat_messages(self.room, content['page_number'])
+                payload = await get_private_room_chat_messages(self.room, content['page_number'])
                 if payload != None:
                     payload = json.loads(payload)
                     await self.send_messages_payload(payload['messages'], payload['new_page_number'])
@@ -446,7 +448,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         """
         # The logged-in user is in our scope thanks to the authentication ASGI middleware
         print("ChatConsumer: leave_room")
-        room = await get_room_or_error(room_id, self.scope["user"])
+        room = await get_private_room_or_error(room_id, self.scope["user"])
 
         # Notify the group that someone left
         await self.channel_layer.group_send(
@@ -664,7 +666,7 @@ def create_room_chat_message(room, user, message):
 
 
 @database_sync_to_async
-def get_room_chat_messages(room, page_number):
+def get_private_room_chat_messages(room, page_number):
     try:
         qs = RoomChatMessage.objects.by_room(room)
         p = Paginator(qs, DEFAULT_ROOM_CHAT_MESSAGE_PAGE_SIZE)

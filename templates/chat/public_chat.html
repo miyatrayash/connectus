@@ -278,6 +278,7 @@ PUBLIC CHAT
     */
     function getRoomChatMessages(){
         var pageNumber = document.getElementById("id_page_number").innerHTML
+        console.log("{{room_id}}");
         if(pageNumber != "-1"){
             setPageNumber("-1") // Do not allow any other queries while one is in progress
             public_chat_socket.send(JSON.stringify({
